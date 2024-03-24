@@ -7,6 +7,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from time import sleep
+import sys
 
 
 def iniciar_driver():
@@ -55,9 +56,12 @@ while True:
         (By.XPATH, "//p[@class='price-container']/span")))
     sleep(2)
 
-    # Imprimir valores na tela
-    for produto, preco in zip(produtos, precos):
-        print(produto.text, preco.text)
+    # Imprimir valores na em nohup.out
+    with open('nohup.out', 'a') as nohup_log:
+        sys.stdout = nohup_log
+        for produto, preco in zip(produtos, precos):
+            print(produto.text, preco.text)
+        sys.stdout = sys.__stdout__
 
     # Buscar próxima página
     try:
@@ -65,8 +69,15 @@ while True:
             CondicaoExperada.element_to_be_clickable((By.ID, "proxima_pagina")))
         botao_proxima_pagina.click()
         sleep(2)
-        print('clicked next page')
+        with open('nohup.out', 'a') as nohup_log:
+            sys.stdout = nohup_log
+            print('clicked next page')
+            sys.stdout = sys.__stdout__
     except:
-        print('Chegamos a última página')
+        with open('nohup.out', 'a') as nohup_log:
+            sys.stdout = nohup_log
+            print('Chegamos a última página')
+            print('====================================')
+            sys.stdout = sys.__stdout__
         sleep(60)
         driver.get('https://cursoautomacao.netlify.app/listagem1')
